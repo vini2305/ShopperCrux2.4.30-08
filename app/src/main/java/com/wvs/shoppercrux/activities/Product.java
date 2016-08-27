@@ -185,6 +185,8 @@ public class Product extends AppCompatActivity implements SearchView.OnQueryText
         String sharedText = preferences.getString("TotalCart",null);
         if(sharedText != null) {
             setBadgeCount(this,icon,sharedText);
+        } else {
+            setBadgeCount(this,icon,"0");
         }
 
         mSearchItem = menu.findItem(R.id.search);

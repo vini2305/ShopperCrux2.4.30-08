@@ -2,6 +2,7 @@ package com.wvs.shoppercrux.Cart;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,19 +39,23 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        CartList cartList = list.get(position);
+        final CartList cartList = list.get(position);
 
         imageLoader = ServerImageParseAdapter.getInstance(context).getImageLoader();
 
-        imageLoader.get(cartList.getProductImage(),
-                ImageLoader.getImageListener(
-                        holder.prodImage,//Server Image
-                        R.mipmap.ic_launcher,//Before loading server image the default showing image.
-                        android.R.drawable.ic_dialog_alert //Error image if requested image dose not found on server.
-                )
-        );
 
-        holder.prodImage.setImageUrl(cartList.getProductImage(), imageLoader);
+//        imageLoader.get(cartList.getProductImage(),
+//                ImageLoader.getImageListener(
+//                        holder.prodImage,//Server Image
+//                        R.mipmap.ic_launcher,//Before loading server image the default showing image.
+//                        android.R.drawable.ic_dialog_alert //Error image if requested image dose not found on server.
+//                )
+//        );
+//
+//
+//        holder.prodImage.setImageUrl(cartList.getProductImage(), imageLoader);
+
+        Log.d("Image URl","Bindview:"+cartList.getProductImage());
         holder.prodName.setText(cartList.getProductName());
         holder.quantity.setText(cartList.getProductQuantity());
         holder.price.setText(cartList.getProductPrice());
@@ -64,15 +69,15 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        NetworkImageView prodImage;
-        TextView prodName,quantity,price;
+        public NetworkImageView prodImage;
+        public TextView prodName,quantity,price;
 
         public ViewHolder(View itemView) {
             super(itemView);
             prodImage = (NetworkImageView) itemView.findViewById(R.id.productImage);
             prodName = (TextView) itemView.findViewById(R.id.productName);
             quantity = (TextView) itemView.findViewById(R.id.quantity);
-            price = (TextView) itemView.findViewById(R.id.quantity);
+            price = (TextView) itemView.findViewById(R.id.price);
         }
     }
 }

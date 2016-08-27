@@ -1,8 +1,8 @@
 package com.wvs.shoppercrux.activities;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -68,7 +68,7 @@ public class LoginActivity extends AppCompatActivity implements ConnectivityRece
     private static final int RC_SIGN_IN = 9001;
     private SignInButton gPlusSignIn;
     private GoogleSignInOptions gso;
-
+    private Dialog progressDialog;
     private TextView mTextDetails;
     private CallbackManager mCallbackManager;
     private AccessTokenTracker mTokenTracker;
@@ -76,6 +76,7 @@ public class LoginActivity extends AppCompatActivity implements ConnectivityRece
     private FacebookCallback<LoginResult> mFacebookCallback = new FacebookCallback<LoginResult>() {
         @Override
         public void onSuccess(LoginResult loginResult) {
+            progressDialog = ProgressDialog.show(LoginActivity.this, "", "Logging in...", true);
             Log.d("VIVZ", "onSuccess");
 //            AccessToken accessToken = loginResult.getAccessToken();
 //            Profile profile = Profile.getCurrentProfile();
@@ -238,8 +239,9 @@ public class LoginActivity extends AppCompatActivity implements ConnectivityRece
                         e.printStackTrace();
                     }
 
-
-                    Log.d("email", fbEmail);
+                    if(fbEmail != null) {
+                        Log.d("email", fbEmail);
+                    }
                     Log.d("fbName",fbName);
 
 //                    SharedPreferences.Editor editor = AppController.mUserPreferences.edit();

@@ -110,6 +110,9 @@ public class ProductList extends AppCompatActivity {
         if(sharedText != null) {
             Product.setBadgeCount(this,icon,sharedText);
         }
+        else {
+            Product.setBadgeCount(this,icon,"0");
+        }
 
         return super.onCreateOptionsMenu(menu);
     }
