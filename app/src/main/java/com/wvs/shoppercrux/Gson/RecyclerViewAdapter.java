@@ -15,9 +15,9 @@ import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolders> {
 
+    public static String locationData;
     private List<ItemObject> itemList;
     private Context context;
-
     public RecyclerViewAdapter(Context context, List<ItemObject> itemList) {
         this.itemList = itemList;
         this.context = context;
@@ -54,11 +54,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
 //                context.startActivity(i);
 
 //
-                String data =itemList.get(position).getSongYear();
+                locationData = itemList.get(position).getSongYear();
                 StoreFragment fragment;
                 fragment = new StoreFragment();
                 Bundle bundle = new Bundle();
-                bundle.putString("location_id", data);
+                bundle.putString("location_id", locationData);
                 fragment.setArguments(bundle);
                 ((FragmentActivity)context).getSupportFragmentManager().beginTransaction()
                         .add(R.id.content_frame, fragment)

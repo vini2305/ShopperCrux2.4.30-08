@@ -27,6 +27,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
+import com.wvs.shoppercrux.Gson.RecyclerViewAdapter;
 import com.wvs.shoppercrux.R;
 import com.wvs.shoppercrux.Utils.PermissionUtils;
 import com.wvs.shoppercrux.activities.LocationActivity;
@@ -39,20 +41,19 @@ public class HomeFragment extends Fragment implements GoogleMap.OnMyLocationButt
         OnMapReadyCallback,
         ActivityCompat.OnRequestPermissionsResultCallback,LocationListener {
 
-    private LocationManager locationManager;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    public double latitude, longitude;
+    private LocationManager locationManager;
     private SQLiteHandler db;
     private SessionManager session;
     private boolean mPermissionDenied = false;
     private GoogleMap mMap;
     private Location mLocation;
     private String provider;
-    public double latitude,longitude;
 //    private FloatingActionButton floatingActionButton;
 //    private Boolean isFabOpen = false;
 //    private FloatingActionButton fab,fab1,fab2;
 //    private Animation fab_open,fab_close,rotate_forward,rotate_backward;
-
     private FloatingActionMenu menu;
     private View view;
     private FloatingActionButton setLocation,listView;
@@ -93,7 +94,7 @@ public class HomeFragment extends Fragment implements GoogleMap.OnMyLocationButt
                 FragmentManager fragmentManager2 = getFragmentManager();
                 FragmentTransaction fragmentTransaction2 = fragmentManager2.beginTransaction();
                 LocationActivity fragment2 = new LocationActivity();
-                fragmentTransaction2.addToBackStack("xyz");
+//                fragmentTransaction2.addToBackStack("xyz");
                 fragmentTransaction2.hide(HomeFragment.this);
                 fragmentTransaction2.add(R.id.content_frame, fragment2);
                 fragmentTransaction2.commit();
@@ -106,6 +107,10 @@ public class HomeFragment extends Fragment implements GoogleMap.OnMyLocationButt
                 FragmentManager fragmentManager2 = getFragmentManager();
                 FragmentTransaction fragmentTransaction2 = fragmentManager2.beginTransaction();
                 StoreFragment fragment2 = new StoreFragment();
+                Bundle bundle = new Bundle();
+                String data = RecyclerViewAdapter.locationData;
+                bundle.putString("location_id", data);
+                fragment2.setArguments(bundle);
 //                fragmentTransaction2.addToBackStack("xyz");
                 fragmentTransaction2.hide(HomeFragment.this);
                 fragmentTransaction2.add(R.id.content_frame, fragment2);

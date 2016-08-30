@@ -46,11 +46,7 @@ import java.util.List;
  */
 public class StoreFragment extends Fragment implements SearchView.OnQueryTextListener {
     List<GetDataAdapter> getDataAdapters;
-    private SearchManager searchManager;
-    private SearchView searchView;
     RecyclerView recyclerView;
-    private MenuItem mSearchItem;
-    private LinearLayoutManager layoutManager;
     RecyclerViewAdapter recyclerViewadapter;
     Toolbar toolbar;
     String GET_JSON_DATA_HTTP_URL = "http://shoppercrux.com/shopper_android_api/seller.php?id=";
@@ -64,6 +60,10 @@ public class StoreFragment extends Fragment implements SearchView.OnQueryTextLis
     RequestQueue requestQueue;
     View view;
     String id;
+    private SearchManager searchManager;
+    private SearchView searchView;
+    private MenuItem mSearchItem;
+    private LinearLayoutManager layoutManager;
     private FloatingActionButton setLocation, mapView;
     private FloatingActionMenu menu;
 
@@ -99,7 +99,7 @@ public class StoreFragment extends Fragment implements SearchView.OnQueryTextLis
 
         //  Log.d("Id",id);
 
-        STORE_URL = GET_JSON_DATA_HTTP_URL + 56;
+        STORE_URL = GET_JSON_DATA_HTTP_URL + id;
         Log.d("location id", STORE_URL);
         getDataAdapters = new ArrayList<>();
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview_store_frag);
@@ -120,7 +120,7 @@ public class StoreFragment extends Fragment implements SearchView.OnQueryTextLis
                 FragmentManager fragmentManager2 = getFragmentManager();
                 FragmentTransaction fragmentTransaction2 = fragmentManager2.beginTransaction();
                 LocationActivity fragment2 = new LocationActivity();
-                fragmentTransaction2.addToBackStack("xyz");
+//                fragmentTransaction2.addToBackStack("xyz");
                 fragmentTransaction2.hide(StoreFragment.this);
                 fragmentTransaction2.add(R.id.content_frame, fragment2);
                 fragmentTransaction2.commit();
