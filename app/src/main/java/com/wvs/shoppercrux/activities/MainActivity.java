@@ -27,6 +27,7 @@ import android.view.View;
 
 import com.wvs.shoppercrux.R;
 import com.wvs.shoppercrux.fragments.HomeFragment;
+import com.wvs.shoppercrux.fragments.NavigationDrawerFragment;
 import com.wvs.shoppercrux.helper.SQLiteHandler;
 import com.wvs.shoppercrux.helper.SessionManager;
 
@@ -36,55 +37,14 @@ import static com.wvs.shoppercrux.R.id;
 
 public class MainActivity extends AppCompatActivity implements FragmentDrawer.FragmentDrawerListener {
 
+    public static final String MY_PREFS_NAME = "CartCount";
     private Toolbar mToolbar;
     private SQLiteHandler db;
     private SessionManager session;
     private FragmentDrawer drawerFragment;
     private CategoryDrawer categoryDrawerFragment;
-    public static final String MY_PREFS_NAME="CartCount";
     private MenuItem mCart;
     private LayerDrawable icon;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        Log.w("Shoppercrux", "onCreate() method excecuted");
-
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mToolbar.setTitle("Shoppercrux");
-        mToolbar.setLogo(R.mipmap.ic_launcher);
-        setSupportActionBar(mToolbar);
-
-        // getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-        drawerFragment = (FragmentDrawer)
-                getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
-        drawerFragment.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), mToolbar);
-        drawerFragment.setDrawerListener(this);
-
-        // categoryDrawerFragment = (CategoryDrawer) getSupportFragmentManager().findFragmentById(R.id.fragment_category_drawer);
-
-        // SqLite database handler
-        db = new SQLiteHandler(getApplicationContext());
-
-        // session manager
-        session = new SessionManager(getApplicationContext());
-
-        if (!session.isLoggedIn()) {
-            logoutUser();
-        }
-
-        isGpsEnabled(getApplicationContext());
-
-        // Fetching user details from SQLite
-        HashMap<String, String> user = db.getUserDetails();
-
-        // display the first navigation drawer view on app launch
-        displayView(0);
-
-    }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     @SuppressWarnings("deprecation")
@@ -122,6 +82,49 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                     return false;
             }
         }
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        Log.w("Shoppercrux", "onCreate() method excecuted");
+
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar.setTitle("Shoppercrux");
+        mToolbar.setLogo(R.mipmap.ic_launcher);
+        setSupportActionBar(mToolbar);
+
+        // getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        drawerFragment = (FragmentDrawer)
+                getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
+        drawerFragment.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), mToolbar);
+        drawerFragment.setDrawerListener(this);
+        NavigationDrawerFragment drawerFragment = (NavigationDrawerFragment)
+                getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer1);
+        drawerFragment.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), mToolbar);
+        // categoryDrawerFragment = (CategoryDrawer) getSupportFragmentManager().findFragmentById(R.id.fragment_category_drawer);
+
+        // SqLite database handler
+        db = new SQLiteHandler(getApplicationContext());
+
+        // session manager
+        session = new SessionManager(getApplicationContext());
+
+        if (!session.isLoggedIn()) {
+            logoutUser();
+        }
+
+        isGpsEnabled(getApplicationContext());
+
+        // Fetching user details from SQLite
+        HashMap<String, String> user = db.getUserDetails();
+
+        // display the first navigation drawer view on app launch
+        displayView(0);
+
     }
 
     private void buildAlertMessageNoGps() {
@@ -237,17 +240,6 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         }
     }
 
-    public static class PackageUtil {
-
-        static boolean checkPermission(Context context, String accessFineLocation) {
-
-            int res = context.checkCallingOrSelfPermission(accessFineLocation);
-            return (res == PackageManager.PERMISSION_GRANTED);
-
-        }
-
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -257,6 +249,17 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             //buildAlertMessageNoGps();
         }
+    }
+
+    public static class PackageUtil {
+
+        static boolean checkPermission(Context context, String accessFineLocation) {
+
+            int res = context.checkCallingOrSelfPermission(accessFineLocation);
+            return (res == PackageManager.PERMISSION_GRANTED);
+
+        }
+
     }
 }
 

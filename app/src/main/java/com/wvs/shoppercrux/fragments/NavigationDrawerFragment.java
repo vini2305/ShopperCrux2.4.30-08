@@ -38,19 +38,31 @@ import java.util.List;
 public class NavigationDrawerFragment extends Fragment {
 public static final String PREF_FILE_NAME="testpref";
     public static final String KEY_USER__LEARNED_DRAWER="user_learned_drawer";
+    private final String TAG = "MainActivity";
+    Context context;
 private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
     private View containeView;
     private boolean mUserLearnedDrawer;
     private boolean mFromSavedInstanceState;
-    private final String TAG = "MainActivity";
-    Context context;
     private RecyclerView recyclerView;
     private LinearLayoutManager layoutManager;
     private View view;
     private RecyclerViewAdapter adapter;
     public NavigationDrawerFragment() {
         // Required empty public constructor
+    }
+
+    public static void saveToPreferances(Context context, String preferenceName, String preferenceValue) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_FILE_NAME, context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(preferenceName, preferenceValue);
+        editor.apply();
+    }
+
+    public static String readFromPreferences(Context context, String preferenceName, String defaultValue) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_FILE_NAME, context.MODE_PRIVATE);
+        return sharedPreferences.getString(preferenceName, defaultValue);
     }
 
     @Override
@@ -68,7 +80,7 @@ private ActionBarDrawerToggle mDrawerToggle;
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
 
-        recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        recyclerView = (RecyclerView) view.findViewById(R.id.drawerList);
         // recyclerView.addItemDecoration(new SimpleDividerItemDecoration(this));
 
         layoutManager = new LinearLayoutManager(context);
@@ -79,6 +91,7 @@ private ActionBarDrawerToggle mDrawerToggle;
         requestJsonObject();
         return view;
     }
+
     private void requestJsonObject(){
 
         RequestQueue queue = Volley.newRequestQueue(getContext());
@@ -105,17 +118,18 @@ private ActionBarDrawerToggle mDrawerToggle;
         });
         queue.add(stringRequest);
     }
+
     public void setUp(int fragmentId, DrawerLayout drawerLayout, Toolbar toolbar) {
-     containeView=getActivity().findViewById(fragmentId);
-        mDrawerLayout=drawerLayout;
-        mDrawerToggle = new ActionBarDrawerToggle(getActivity(),drawerLayout,toolbar, R.string.drawer_open, R.string.drawer_close){
+        containeView = getActivity().findViewById(fragmentId);
+        mDrawerLayout = drawerLayout;
+        mDrawerToggle = new ActionBarDrawerToggle(getActivity(), drawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
 
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                if(!mUserLearnedDrawer){
-                    mUserLearnedDrawer= true;
-                    saveToPreferances(getActivity(),KEY_USER__LEARNED_DRAWER,mUserLearnedDrawer+"");
+                if (!mUserLearnedDrawer) {
+                    mUserLearnedDrawer = true;
+                    saveToPreferances(getActivity(), KEY_USER__LEARNED_DRAWER, mUserLearnedDrawer + "");
                 }
                 getActivity().invalidateOptionsMenu();
 
@@ -128,29 +142,17 @@ private ActionBarDrawerToggle mDrawerToggle;
             }
         };
 
-        if(!mUserLearnedDrawer&& !mFromSavedInstanceState){
-mDrawerLayout.openDrawer(containeView);
+        if (!mUserLearnedDrawer && !mFromSavedInstanceState) {
+            mDrawerLayout.openDrawer(containeView);
         }
-mDrawerLayout.setDrawerListener(mDrawerToggle);
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-        mDrawerLayout.post(new Runnable(){
+        mDrawerLayout.post(new Runnable() {
             @Override
             public void run() {
-mDrawerToggle.syncState();
+                mDrawerToggle.syncState();
             }
         });
 
-    }
-
-    public static void saveToPreferances(Context context, String preferenceName,String preferenceValue ){
-        SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_FILE_NAME,context.MODE_PRIVATE);
-       SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(preferenceName,preferenceValue);
-        editor.apply();
-    }
-
-    public static String readFromPreferences(Context context, String preferenceName,String defaultValue ){
-        SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_FILE_NAME,context.MODE_PRIVATE);
-        return sharedPreferences.getString(preferenceName,defaultValue);
     }
 }
