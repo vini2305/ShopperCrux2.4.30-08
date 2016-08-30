@@ -24,13 +24,13 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.wvs.shoppercrux.Product.GetDataAdapter;
 import com.wvs.shoppercrux.Product.RecyclerViewAdapter;
 import com.wvs.shoppercrux.R;
 import com.wvs.shoppercrux.classes.BadgeDrawable;
 import com.wvs.shoppercrux.helper.SQLiteHandler;
+import com.wvs.shoppercrux.helper.SessionManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -62,12 +62,12 @@ public class Product extends AppCompatActivity implements SearchView.OnQueryText
     public static String sellerId;
     public static MenuItem mSearchItem,mCart;
     public Menu mMenu;
-    JsonObjectRequest jsonObjectRequest;
-    String GET_CART_COUNT_URL="http://shoppercrux.com/shopper_android_api/cartcount.php";
-    String cartCount;
     public static LayerDrawable icon;
-    public static final String MY_PREFS_NAME="CartCount";
-
+    public static String MY_PREFS_NAME="CartCount";
+    private String PRICE="price";
+    private SQLiteHandler db;
+    private SessionManager session;
+    public static String MY_WISHLIST="WishList";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +79,13 @@ public class Product extends AppCompatActivity implements SearchView.OnQueryText
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle("");
+
+        // SqLite database handler
+        db = new SQLiteHandler(getApplicationContext());
+
+        // session manager
+        session = new SessionManager(getApplicationContext());
+
         Intent intent = getIntent();
         sellerId = intent.getStringExtra("seller_id");
 //        textView = (TextView) findViewById(R.sellerId.display_id);
@@ -93,7 +100,7 @@ public class Product extends AppCompatActivity implements SearchView.OnQueryText
 
 //        recyclerViewlayoutManager = new LinearLayoutManager(this);
 
-        recyclerViewlayoutManager= new GridLayoutManager(this,2);
+        recyclerViewlayoutManager= new GridLayoutManager(this,3);
 
         recyclerView.setLayoutManager(recyclerViewlayoutManager);
         JSON_DATA_WEB_CALL();
@@ -146,10 +153,10 @@ public class Product extends AppCompatActivity implements SearchView.OnQueryText
                 json = array.getJSONObject(i);
 
                 getDataAdapter.setImageTitleNamee(json.getString(JSON_IMAGE_TITLE_NAME));
-
                 getDataAdapter.setImageServerUrl(json.getString(JSON_IMAGE_URL));
                 getDataAdapter.setSellerID(json.getString(PRODUCT_ID));
                 getDataAdapter.setStoreName(json.getString(STORE_NAME));
+                getDataAdapter.setPrice(Double.parseDouble(json.getString(PRICE)));
 
                 title.setText(getDataAdapter.getStoreName());
 
@@ -229,11 +236,28 @@ public class Product extends AppCompatActivity implements SearchView.OnQueryText
                 startActivity(intent);
                 return true;
 
+            case R.id.action_wishlist:
+                Intent intent1=new Intent(Product.this,WishListActivity.class);
+                startActivity(intent1);
+                return true;
+
+            case R.id.action_logout:
+                logoutUser();
+
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
+    private void logoutUser() {
+        session.setLogin(false);
+        db.deleteUsers();
+        // Launching the login activity
+        Intent intent = new Intent(Product.this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        finish();
+    }
 
     @Override
     public boolean onQueryTextSubmit(String query) {
@@ -275,43 +299,6 @@ public class Product extends AppCompatActivity implements SearchView.OnQueryText
         icon.mutate();
         icon.setDrawableByLayerId(R.id.ic_badge, badge);
     }
-
-
-        public String count(final VolleyCallback callback) {
-
-            String customer_id = SQLiteHandler.user_id;
-            String CART=  GET_CART_COUNT_URL+"?cid="+customer_id;
-            Log.d("CART", "count url :"+CART);
-
-            jsonObjectRequest = new JsonObjectRequest(CART, new Response.Listener<JSONObject>() {
-
-                @Override
-                public void onResponse(JSONObject response) {
-                    Log.d("sc","Response"+response);
-                    try {
-                        cartCount = response.getString("count");
-                        callback.onSuccess(cartCount);
-                        Log.d("CartCount" ,"Cart count "+cartCount);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-
-                }
-            });
-
-            requestQueue = Volley.newRequestQueue(this);
-            requestQueue.add(jsonObjectRequest);
-            return cartCount;
-        }
-
-    public interface VolleyCallback{
-        void onSuccess(String result);
-    }
-
 }
 
 

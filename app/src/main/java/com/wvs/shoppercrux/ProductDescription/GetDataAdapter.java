@@ -7,7 +7,7 @@ public class GetDataAdapter {
 
     public String productName;
     public String productImage;
-    private String productPrice;
+    private double productPrice;
     private String productDesription;
 
     public String getProductName() {
@@ -18,11 +18,11 @@ public class GetDataAdapter {
         this.productName = productName;
     }
 
-    public String getProductPrice() {
+    public double getProductPrice() {
         return productPrice;
     }
 
-    public void setProductPrice(String productPrice) {
+    public void setProductPrice(double productPrice) {
         this.productPrice = productPrice;
     }
 
@@ -45,8 +45,5 @@ public class GetDataAdapter {
 //    public void setImageServerUrl(String imageServerUrl) {
 //        this.ImageServerUrl = "http://prachodayat.in/shoppercrux/image/"+imageServerUrl;
 //    }
-
-
-
 
 }

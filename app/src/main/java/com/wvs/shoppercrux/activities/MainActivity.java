@@ -5,7 +5,9 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.LayerDrawable;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,6 +22,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.wvs.shoppercrux.R;
@@ -38,7 +41,9 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
     private SessionManager session;
     private FragmentDrawer drawerFragment;
     private CategoryDrawer categoryDrawerFragment;
-
+    public static final String MY_PREFS_NAME="CartCount";
+    private MenuItem mCart;
+    private LayerDrawable icon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,14 +157,47 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+              case R.id.cart:
+                Intent intent = new Intent(MainActivity.this,CartActivity.class);
+                startActivity(intent);
+                return true;
+
+            case id.action_logout:
+                logoutUser();
+                return true;
+
+            case id.action_wishlist:
+                Intent intent1=new Intent(MainActivity.this,WishListActivity.class);
+                startActivity(intent1);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        mCart = menu.findItem(R.id.cart);
+        icon = (LayerDrawable) mCart.getIcon();
+
+        SharedPreferences preferences = getSharedPreferences(MY_PREFS_NAME,MODE_PRIVATE);
+        String sharedText = preferences.getString("TotalCart",null);
+        if(sharedText != null) {
+            Product.setBadgeCount(this,icon,sharedText);
+        } else {
+            Product.setBadgeCount(this,icon,"0");
+        }
+
         return true;
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.cart).setVisible(false);
         menu.findItem(R.id.search).setVisible(false);
         return super.onPrepareOptionsMenu(menu);
     }

@@ -66,7 +66,7 @@ public class HomeFragment extends Fragment implements GoogleMap.OnMyLocationButt
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-         view =inflater.inflate(R.layout.content_home, container, false);
+        view =inflater.inflate(R.layout.content_home, container, false);
         // SqLite database handler
         db = new SQLiteHandler(getActivity().getApplicationContext());
 
@@ -98,6 +98,18 @@ public class HomeFragment extends Fragment implements GoogleMap.OnMyLocationButt
                 fragmentTransaction2.add(R.id.content_frame, fragment2);
                 fragmentTransaction2.commit();
 
+            }
+        });
+        listView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager fragmentManager2 = getFragmentManager();
+                FragmentTransaction fragmentTransaction2 = fragmentManager2.beginTransaction();
+                StoreFragment fragment2 = new StoreFragment();
+//                fragmentTransaction2.addToBackStack("xyz");
+                fragmentTransaction2.hide(HomeFragment.this);
+                fragmentTransaction2.add(R.id.content_frame, fragment2);
+                fragmentTransaction2.commit();
             }
         });
 

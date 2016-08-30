@@ -1,14 +1,15 @@
 package com.wvs.shoppercrux.Gson;
 
 import android.content.Context;
-import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.wvs.shoppercrux.R;
-import com.wvs.shoppercrux.activities.StoreActivity;
+import com.wvs.shoppercrux.fragments.StoreFragment;
 
 import java.util.List;
 
@@ -47,11 +48,21 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
 //                i.putExtra("location_id",data);
 //                context.startActivity(i);
 
-                String data =itemList.get(position).getSongYear();
-                Intent i = new Intent(context, StoreActivity.class);
-                i.putExtra("location_id",data);
-                context.startActivity(i);
+//                String data =itemList.get(position).getSongYear();
+//                Intent i = new Intent(context, StoreActivity.class);
+//                i.putExtra("location_id",data);
+//                context.startActivity(i);
 
+//
+                String data =itemList.get(position).getSongYear();
+                StoreFragment fragment;
+                fragment = new StoreFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("location_id", data);
+                fragment.setArguments(bundle);
+                ((FragmentActivity)context).getSupportFragmentManager().beginTransaction()
+                        .add(R.id.content_frame, fragment)
+                        .commit();
                 // Toast.makeText(context, itemList.get(position).getSongYear(), Toast.LENGTH_SHORT).show();
 
             }

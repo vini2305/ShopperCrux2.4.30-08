@@ -26,6 +26,7 @@ import com.wvs.shoppercrux.helper.SQLiteHandler;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,12 +38,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     Context context;
     List<GetDataAdapter> getDataAdapter;
     ImageLoader imageLoader1;
-    JsonObjectRequest jsonObjectRequest;
+    JsonObjectRequest jsonObjectRequest,jsonObjectRequest1;
     private RequestQueue requestQueue;
     String GET_CART_COUNT_URL="http://shoppercrux.com/shopper_android_api/addtocart.php";
-    public String CART;
+    public String CART,WISHLIST;
     public int count;
-    public static final String MY_PREFS_NAME="CartCount";
+    public static String MY_PREFS_NAME="CartCount";
+    public static String MY_WISHLIST="WishList";
+    String GET_WISHLIST="http://shoppercrux.com/shopper_android_api/wishlist.php";
+    public static String productId;
 
     public RecyclerViewAdapter() {
 
@@ -66,7 +70,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, final int position) {
+    public void onBindViewHolder(final ViewHolder viewHolder, final int position) {
 
         final GetDataAdapter getDataAdapter1 = getDataAdapter.get(position);
 
@@ -81,10 +85,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         );
 
         viewHolder.networkImageView.setImageUrl(getDataAdapter1.getImageServerUrl(), imageLoader1);
-
+        Log.d("Image URl","Bindview:"+getDataAdapter1.getImageServerUrl());
         viewHolder.ImageTitleNameView.setText(getDataAdapter1.getImageTitleName());
         viewHolder.sellerId.setText(getDataAdapter1.getSellerID());
         viewHolder.storename.setText(getDataAdapter1.getStoreName());
+        viewHolder.price.setText(new DecimalFormat("##.##").format(getDataAdapter1.getPrice()));
 
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,9 +103,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
               //  i.putExtra("seller_id", sell);
                 i.putExtra("product_id", product_id);
                 context.startActivity(i);
-
-//                Toast.makeText(context, "sdfsdfds", Toast.LENGTH_SHORT).show();
-//                Log.d("productlist","dfskdkjdnf");
             }
         });
 
@@ -114,6 +116,27 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 addToCart();
             }
         });
+
+        SharedPreferences preferences = context.getSharedPreferences(MY_WISHLIST,Context.MODE_PRIVATE);
+        String sharedText = preferences.getString("ProductId",null);
+
+        if(sharedText == getDataAdapter1.getSellerID()) {
+            viewHolder.addToWishList.setImageResource(R.drawable.liked);
+        } else {
+            viewHolder.addToWishList.setImageResource(R.drawable.like);
+        }
+
+        viewHolder.addToWishList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String customer_id = SQLiteHandler.user_id;
+                String product_id = getDataAdapter1.getSellerID();
+                WISHLIST= GET_WISHLIST+"?cid="+customer_id+"&pid="+product_id;
+                viewHolder.addToWishList.setImageResource(R.drawable.liked);
+                addToWishList();
+            }
+        });
+
     }
 
     public void addToCart() {
@@ -149,6 +172,35 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     }
 
+    public void addToWishList() {
+
+        jsonObjectRequest1 = new JsonObjectRequest(WISHLIST, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+
+                try {
+                    productId=response.getString("product");
+
+                    SharedPreferences wishlistAdded = context.getSharedPreferences(MY_WISHLIST,Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor=wishlistAdded.edit();
+                    editor.putString("ProductId",productId);
+                    editor.commit();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        requestQueue = Volley.newRequestQueue(context);
+        requestQueue.add(jsonObjectRequest1);
+
+    }
+
     public void setFilter(List<GetDataAdapter> products) {
      getDataAdapter = new ArrayList<>();
      getDataAdapter.addAll(products);
@@ -164,8 +216,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         public TextView ImageTitleNameView,storename;
         public NetworkImageView networkImageView;
-        public TextView sellerId;
-        public ImageButton addToCart;
+        public TextView sellerId,price;
+        public ImageButton addToCart,addToWishList;
 
         public ViewHolder(View itemView) {
 
@@ -175,6 +227,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             sellerId = (TextView) itemView.findViewById(R.id.tx_seller_id);
             storename = (TextView) itemView.findViewById(R.id.nickname);
             addToCart = (ImageButton) itemView.findViewById(R.id.addToCart);
+            addToWishList = (ImageButton) itemView.findViewById(R.id.addToWishList);
+            price = (TextView) itemView.findViewById(R.id.price);
         }
     }
 }

@@ -4,6 +4,8 @@ import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +25,8 @@ import com.android.volley.toolbox.Volley;
 import com.wvs.shoppercrux.R;
 import com.wvs.shoppercrux.Stores.GetDataAdapter;
 import com.wvs.shoppercrux.Stores.RecyclerViewAdapter;
+import com.wvs.shoppercrux.helper.SQLiteHandler;
+import com.wvs.shoppercrux.helper.SessionManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,6 +52,10 @@ public class StoreActivity extends AppCompatActivity implements SearchView.OnQue
     String SELLER_ADDRESS="seller_address";
     String STORE_URL;
     JsonArrayRequest jsonArrayRequest ;
+    private MenuItem mCart;
+    private SQLiteHandler db;
+    private SessionManager session;
+    private LayerDrawable icon;
 
     RequestQueue requestQueue ;
     @Override
@@ -59,13 +67,21 @@ public class StoreActivity extends AppCompatActivity implements SearchView.OnQue
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+
+        // SqLite database handler
+        db = new SQLiteHandler(getApplicationContext());
+
+        // session manager
+        session = new SessionManager(getApplicationContext());
+
         Intent intent = getIntent();
         String id = intent.getStringExtra("location_id");
 //        textView = (TextView) findViewById(R.id.display_id);
 //        textView.setText(id);
         Log.d("location id",id);
          STORE_URL = GET_JSON_DATA_HTTP_URL+id;
-        Log.d("location id",STORE_URL);
+        Log.d("location id","Store URL"+STORE_URL);
         GetDataAdapter1 = new ArrayList<>();
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview1);
         recyclerView.setHasFixedSize(true);
@@ -80,6 +96,17 @@ public class StoreActivity extends AppCompatActivity implements SearchView.OnQue
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
+        mCart = menu.findItem(R.id.cart);
+        icon = (LayerDrawable) mCart.getIcon();
+
+        SharedPreferences preferences = getSharedPreferences(MainActivity.MY_PREFS_NAME,MODE_PRIVATE);
+        String sharedText = preferences.getString("TotalCart",null);
+        if(sharedText != null) {
+            Product.setBadgeCount(this,icon,sharedText);
+        } else {
+            Product.setBadgeCount(this,icon,"0");
+        }
+
         mSearchItem = menu.findItem(R.id.search);
         searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchView = (SearchView) MenuItemCompat.getActionView(mSearchItem);
@@ -91,7 +118,7 @@ public class StoreActivity extends AppCompatActivity implements SearchView.OnQue
             searchView.setOnQueryTextListener(this);
         }
 
-        MenuItemCompat.setOnActionExpandListener(mSearchItem, new MenuItemCompat.OnActionExpandListener(){
+         MenuItemCompat.setOnActionExpandListener(mSearchItem, new MenuItemCompat.OnActionExpandListener(){
 
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
@@ -107,20 +134,14 @@ public class StoreActivity extends AppCompatActivity implements SearchView.OnQue
         return true;
     }
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.cart).setVisible(false);
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    public void JSON_DATA_WEB_CALL(){
+      public void JSON_DATA_WEB_CALL(){
 
         jsonArrayRequest = new JsonArrayRequest(STORE_URL,
 
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-
+                        Log.d("location id","Store URL:"+STORE_URL);
                         JSON_PARSE_DATA_AFTER_WEBCALL(response);
                     }
                 },
@@ -173,6 +194,14 @@ public class StoreActivity extends AppCompatActivity implements SearchView.OnQue
                 onBackPressed();
                 return true;
 
+            case R.id.action_logout:
+                logoutUser();
+
+            case R.id.cart:
+                Intent intent = new Intent(StoreActivity.this,CartActivity.class);
+                startActivity(intent);
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -204,4 +233,13 @@ public class StoreActivity extends AppCompatActivity implements SearchView.OnQue
     return storeList;
     }
 
+    private void logoutUser() {
+        session.setLogin(false);
+        db.deleteUsers();
+        // Launching the login activity
+        Intent intent = new Intent(StoreActivity.this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        finish();
+    }
 }

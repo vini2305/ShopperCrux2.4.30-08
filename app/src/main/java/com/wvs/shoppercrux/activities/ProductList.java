@@ -23,6 +23,8 @@ import com.android.volley.toolbox.Volley;
 import com.wvs.shoppercrux.ProductDescription.GetDataAdapter;
 import com.wvs.shoppercrux.ProductDescription.RecyclerViewAdapter;
 import com.wvs.shoppercrux.R;
+import com.wvs.shoppercrux.helper.SQLiteHandler;
+import com.wvs.shoppercrux.helper.SessionManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,6 +47,9 @@ public class ProductList extends AppCompatActivity {
     Toolbar toolbar;
     public static MenuItem mCart;
     public static LayerDrawable icon;
+    private SQLiteHandler db;
+    private SessionManager session;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +60,14 @@ public class ProductList extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+
+        // SqLite database handler
+        db = new SQLiteHandler(getApplicationContext());
+
+        // session manager
+        session = new SessionManager(getApplicationContext());
+
         productName = (TextView) findViewById(R.id.product_name);
         productPrice = (TextView) findViewById(R.id.product_price);
         productDescription = (TextView) findViewById(R.id.product_description);
@@ -135,7 +148,7 @@ public class ProductList extends AppCompatActivity {
                 json = array.getJSONObject(i);
                 getDataAdapter.setProductImage(json.getString("image"));
                 getDataAdapter.setProductName(json.getString("name"));
-                getDataAdapter.setProductPrice(json.getString("price"));
+                getDataAdapter.setProductPrice(Double.parseDouble(json.getString("price")));
                 getDataAdapter.setProductDesription(stripHtml(json.getString("description")));
 
                 title.setText(getDataAdapter.getProductName());
@@ -158,6 +171,15 @@ public class ProductList extends AppCompatActivity {
             case android.R.id.home:
                 onBackPressed();
                 return true;
+
+            case R.id.action_logout:
+                logoutUser();
+
+            case R.id.action_wishlist:
+                Intent intent1=new Intent(ProductList.this,WishListActivity.class);
+                startActivity(intent1);
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -165,5 +187,15 @@ public class ProductList extends AppCompatActivity {
 
     public String stripHtml(String html) {
         return Html.fromHtml(html).toString();
+    }
+
+    private void logoutUser() {
+        session.setLogin(false);
+        db.deleteUsers();
+        // Launching the login activity
+        Intent intent = new Intent(ProductList.this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        finish();
     }
 }

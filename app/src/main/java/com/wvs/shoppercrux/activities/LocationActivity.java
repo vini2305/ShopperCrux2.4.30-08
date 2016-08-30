@@ -55,7 +55,7 @@ public class LocationActivity extends Fragment {
     private void requestJsonObject(){
 
         RequestQueue queue = Volley.newRequestQueue(getContext());
-        String url ="http://prachodayat.in/shopper_android_api/location.php";
+        String url ="http://shoppercrux.com/shopper_android_api/location.php";
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override

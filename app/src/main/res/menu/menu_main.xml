@@ -5,11 +5,31 @@
     tools:context=".MainActivity">
 
      <item
-        android:id="@+id/action_settings"
-        android:title="@string/action_settings"
-         android:visible="false"
+        android:id="@+id/action_profile"
+        android:title="My Profile"
         android:orderInCategory="100"
-        app:showAsAction="never" />
+        app:showAsAction="collapseActionView" />
+
+    <item
+        android:id="@+id/action_wishlist"
+        android:title="My Wishlist"
+        app:showAsAction="collapseActionView" />
+
+    <item
+        android:id="@+id/action_orders"
+        android:title="My Orders"
+        app:showAsAction="collapseActionView"/>
+
+    <item
+        android:id="@+id/action_reset"
+        android:title="Reset Password"
+        app:showAsAction="collapseActionView"/>
+
+    <item
+        android:id="@+id/action_logout"
+        android:title="Logout"
+        app:showAsAction="collapseActionView"/>
+
 
     <item
         android:id="@+id/search"
@@ -24,5 +44,9 @@
         app:showAsAction="always"
         android:icon="@drawable/ic_menu_cart"
         />
+    <item android:id="@+id/notification"
+        android:title="Notification"
+        android:icon="@drawable/notify"
+        app:showAsAction="always"/>
 
 </menu>

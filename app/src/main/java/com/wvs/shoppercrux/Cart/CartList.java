@@ -7,15 +7,22 @@ import android.util.Log;
  */
 public class CartList {
 
-    public String productImage,productName,productQuantity,productId,productPrice;
+    public String ImageServerUrl;
+    public String productName;
+    public String productQuantity;
+    public String productId;
+    public String productPrice;
+    public String totalPrice;
 
-    public void setProductImage(String productImage) {
-        productImage = productImage.replaceAll(" ", "%20");
-        Log.d("Image URls","Cart image replace URL:"+productImage);
-        this.productImage = "http://shoppercrux.com/image/"+productImage;
+    public String getImageServerUrl() {
+        return ImageServerUrl;
     }
 
-    public String getProductImage() { return productImage; }
+    public void setImageServerUrl(String imageServerUrl) {
+        imageServerUrl = imageServerUrl.replaceAll(" ", "%20");
+        Log.d("Image URls","Cart image replace URL:"+imageServerUrl);
+        this.ImageServerUrl = "http://shoppercrux.com/image/"+imageServerUrl;
+    }
 
     public void setProductName(String productName) { this.productName = productName; }
 
@@ -32,5 +39,9 @@ public class CartList {
     public void setProductPrice(String productPrice) { this.productPrice = productPrice; }
 
     public String getProductPrice() { return productPrice; }
+
+    public void setTotalPrice(String totalPrice) { this.totalPrice = totalPrice; }
+
+    public String getTotalPrice() { return totalPrice; }
 
 }

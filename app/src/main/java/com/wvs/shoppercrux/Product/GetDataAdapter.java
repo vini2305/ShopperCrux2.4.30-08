@@ -8,6 +8,7 @@ public class GetDataAdapter {
     public String ImageServerUrl;
     public String ImageTitleName;
     private String SellerID,storeName;
+    private double price;
 
     public String getSellerID() {
         return SellerID;
@@ -38,5 +39,13 @@ public class GetDataAdapter {
     public String getStoreName() { return storeName; }
 
     public void setStoreName(String storeName) { this.storeName = storeName; }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public double getPrice() {
+        return price;
+    }
 
 }

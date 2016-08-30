@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,6 +64,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         );
 
         viewHolder.networkImageView.setImageUrl(getDataAdapter1.getImageServerUrl(), imageLoader1);
+        Log.d("StoreUrl","Store image urls:"+getDataAdapter1.getImageServerUrl());
         viewHolder.ImageTitleNameView.setText(getDataAdapter1.getImageTitleName());
         viewHolder.sellerId.setText(getDataAdapter1.getSellerID());
         viewHolder.sellerAddress.setText(stripHtml(getDataAdapter1.getSellerAddress()));

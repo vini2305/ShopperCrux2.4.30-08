@@ -38,6 +38,7 @@ public class CartActivity extends AppCompatActivity {
     private String PRICE="price";
     private String QUANTITY="quantity";
     private String PRODUCT_ID="product_id";
+    private String TOTAL ="total";
     String GET_CART_ITEMS_URL="http://shoppercrux.com/shopper_android_api/checkout.php";
     private String CART_URL;
     private JsonArrayRequest jsonArrayRequest;
@@ -84,7 +85,7 @@ public class CartActivity extends AppCompatActivity {
         jsonArrayRequest = new JsonArrayRequest(CART_URL, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
-                Log.d("Checkout","Response Checkout:"+response);
+//                Log.d("Checkout","Response Checkout:"+response);
                 obtainedCartItems(response);
             }
         }, new Response.ErrorListener() {
@@ -110,9 +111,9 @@ public class CartActivity extends AppCompatActivity {
                 cartList.setProductName(json.getString(MODEL));
                 cartList.setProductPrice(json.getString(PRICE));
                 cartList.setProductQuantity(json.getString(QUANTITY));
-                cartList.setProductImage(json.getString(IMAGE));
-                Log.d("Product Image","Image:"+json.getString(IMAGE));
+                cartList.setImageServerUrl(json.getString(IMAGE));
                 cartList.setProductId(json.getString(PRODUCT_ID));
+                cartList.setTotalPrice(json.getString(TOTAL));
 
             } catch (JSONException e){
                 e.printStackTrace();

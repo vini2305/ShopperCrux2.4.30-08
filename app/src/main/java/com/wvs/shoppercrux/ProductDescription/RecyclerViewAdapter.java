@@ -12,6 +12,7 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.wvs.shoppercrux.R;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 /**
@@ -60,7 +61,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         viewHolder.productImage.setImageUrl(getDataAdapter1.getProductImage(), imageLoader1);
 
         viewHolder.productName.setText(getDataAdapter1.getProductName());
-        viewHolder.productPrice.setText(getDataAdapter1.getProductPrice());
+        viewHolder.productPrice.setText(new DecimalFormat("##.##").format(getDataAdapter1.getProductPrice()));
         viewHolder.productDescription.setText(stripHtml(getDataAdapter1.getProductDesription()));
 
 //        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {

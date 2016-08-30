@@ -9,7 +9,8 @@
         card_view:cardElevation="3dp"
         card_view:contentPadding="3dp"
         card_view:cardCornerRadius="3dp"
-        card_view:cardMaxElevation="3dp">
+        card_view:cardMaxElevation="3dp"
+        card_view:cardUseCompatPadding="true">
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -42,11 +43,19 @@
                     />
 
                 <TextView
+                    android:id="@+id/price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    />
+
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="seller id"
                     android:id="@+id/tx_seller_id"
+                    android:visibility="gone"
                     />
 
                 <TextView
@@ -56,12 +65,26 @@
                     android:visibility="gone"
                     />
 
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center"
+                android:layout_alignParentBottom="true">
+
+                <ImageButton
+                    android:id="@+id/addToWishList"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/MaterialButton"
+                    />
+
                 <ImageButton
                     android:id="@+id/addToCart"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/fab_add"
-                    android:layout_gravity="center"
+                    android:src="@drawable/add"
                     android:theme="@style/MaterialButton"
                     />
 
